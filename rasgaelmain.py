@@ -2,15 +2,6 @@ from groq import Groq
 import streamlit as st
 import pandas as pd
 
-# Configuración de Google Sheets
-SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly']
-KEY = 'key.json'  # Ruta al archivo de credenciales
-SPREADSHEET_ID = '1Y7iCVWNreXhGLcgcb6JhYHHvVPvcs0SL3c3CmUFwFSU'
-RANGE_NAME = 'main!A1:B15'
-
-creds = service_account.Credentials.from_service_account_file(KEY, scopes=SCOPES)
-service = build('sheets', 'v4', credentials=creds)
-sheet = service.spreadsheets()
 
 # Leer datos de Google Sheets
 result = sheet.values().get(spreadsheetId=SPREADSHEET_ID, range=RANGE_NAME).execute()
