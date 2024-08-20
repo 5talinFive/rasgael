@@ -1,20 +1,16 @@
+import pandas as pd
 from groq import Groq
 import streamlit as st
-import pandas as pd
 
+# Leer datos de un archivo Excel en lugar de Google Sheets
+data_df = pd.read_excel('DataCole.xlsx')
 
-# Leer datos de Google Sheets
-result = sheet.values().get(spreadsheetId=SPREADSHEET_ID, range=RANGE_NAME).execute()
-values = result.get('values', [])
-
-# Convertir datos a un diccionario con limpieza de texto
+# Convertir datos a un diccionario
 data_dict = {}
-if values:
-    for row in values:
-        if len(row) >= 2:
-            key = row[0].strip().lower()  # Clave en minúsculas y sin espacios
-            value = row[1].strip().lower()  # Valor también en minúsculas
-            data_dict[key] = value
+for index, row in data_df.iterrows():
+    key = str(row[0]).strip().lower()
+    value = str(row[1]).strip().lower()
+    data_dict[key] = value
 
 # Inicializa el cliente de Groq
 client = Groq(api_key="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")
@@ -23,7 +19,6 @@ def get_relevant_info(query):
     query_lower = query.lower()
     relevant_info = []
 
-    # Buscar coincidencias con más flexibilidad
     for k, v in data_dict.items():
         if any(word in k for word in query_lower.split()) or any(word in v for word in query_lower.split()):
             relevant_info.append(f"{k.capitalize()}: {v}")
@@ -33,18 +28,15 @@ def get_relevant_info(query):
 def get_ia_response(messages):
     user_query = messages[-1]["content"].lower()
     
-    # Incluir información relevante sobre el colegio solo como contexto para el modelo
     relevant_context = ""
     if "colegio" in user_query or "rafael galeth" in user_query:
         relevant_context = get_relevant_info(user_query)
     
-    # Crear el mensaje de contexto internamente
     context_message = {"role": "system", "content": f"Información relevante del Colegio Rafael Galeth:\n{relevant_context}\n"}
     
-    # Pasar contexto al modelo (sin mostrarlo al usuario)
     completion = client.chat.completions.create(
         model="llama-3.1-70b-versatile",
-        messages=messages + [context_message],  # Agregar contexto solo para la IA
+        messages=messages + [context_message],
         temperature=0.2,
         max_tokens=1024,
         stream=True,
@@ -86,3 +78,4 @@ def chat():
 
 if __name__ == "__main__":
     chat()
+
