@@ -1,4 +1,5 @@
 import pandas as pd
+import toml
 from groq import Groq
 import streamlit as st
 
@@ -12,8 +13,12 @@ for index, row in data_df.iterrows():
     value = str(row[1]).strip().lower()
     data_dict[key] = value
 
+# Leer la configuración del archivo TOML
+config = toml.load('config.toml')
+api_key = config['groq']['api_key']
+
 # Inicializa el cliente de Groq
-#code...
+client = Groq(api_key=api_key)
 
 def get_relevant_info(query):
     query_lower = query.lower()
@@ -78,4 +83,3 @@ def chat():
 
 if __name__ == "__main__":
     chat()
-
