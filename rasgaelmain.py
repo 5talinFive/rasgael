@@ -13,7 +13,7 @@ for index, row in data_df.iterrows():
     data_dict[key] = value
 
 # Inicializa el cliente de Groq
-client = Groq(api_key="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")
+#code...
 
 def get_relevant_info(query):
     query_lower = query.lower()
